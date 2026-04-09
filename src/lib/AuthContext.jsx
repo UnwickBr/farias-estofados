@@ -10,8 +10,22 @@ const MOCK_CREDENTIALS = {
   cpf: '123.456.789-00',
   birthDate: '14/08/1996',
   addresses: {
-    casa: 'Rua das Palmeiras, 245\nApto 42 - Centro\nSao Paulo - SP\nCEP 01010-100',
-    entrega: 'Av. Paulista, 1500\nConjunto 8\nSao Paulo - SP\nCEP 01310-200',
+    casa: {
+      rua: 'Rua das Palmeiras',
+      numero: '245',
+      bairro: 'Centro',
+      cidade: 'Sao Paulo',
+      estado: 'SP',
+      cep: '01010-100',
+    },
+    entrega: {
+      rua: 'Av. Paulista',
+      numero: '1500',
+      bairro: 'Bela Vista',
+      cidade: 'Sao Paulo',
+      estado: 'SP',
+      cep: '01310-200',
+    },
   },
 }
 
@@ -78,7 +92,13 @@ export const AuthProvider = ({ children }) => {
       },
       updateAddresses(addresses) {
         if (!user) return
-        persistUser({ ...user, addresses: { ...user.addresses, ...addresses } })
+        persistUser({
+          ...user,
+          addresses: {
+            ...user.addresses,
+            ...addresses,
+          },
+        })
       },
       logout() {
         window.localStorage.removeItem(AUTH_STORAGE_KEY)

@@ -14,7 +14,6 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
 import { useAuth } from '@/lib/AuthContext'
 import { getOrdersByUser } from '@/lib/orders'
 
@@ -23,6 +22,15 @@ const menuItems = [
   { id: 'pedidos', label: 'Meus Pedidos', icon: Package },
   { id: 'enderecos', label: 'Enderecos', icon: MapPinned },
 ]
+
+const createEmptyAddress = () => ({
+  rua: '',
+  numero: '',
+  bairro: '',
+  cidade: '',
+  estado: '',
+  cep: '',
+})
 
 export default function User() {
   const { isAuthenticated, user, logout, updateUser, updateAddresses } = useAuth()
@@ -36,8 +44,8 @@ export default function User() {
     login: '',
   })
   const [addressForm, setAddressForm] = useState({
-    casa: '',
-    entrega: '',
+    casa: createEmptyAddress(),
+    entrega: createEmptyAddress(),
   })
   const [orders, setOrders] = useState([])
   const [profileSaved, setProfileSaved] = useState(false)
@@ -56,8 +64,8 @@ export default function User() {
     })
 
     setAddressForm({
-      casa: user.addresses?.casa || '',
-      entrega: user.addresses?.entrega || '',
+      casa: user.addresses?.casa || createEmptyAddress(),
+      entrega: user.addresses?.entrega || createEmptyAddress(),
     })
 
     setOrders(getOrdersByUser(user.login))
@@ -228,15 +236,31 @@ export default function User() {
                   {addressSaved && <p className="text-sm text-green-600 mb-4">Enderecos atualizados com sucesso.</p>}
 
                   <div className="grid md:grid-cols-2 gap-5">
-                    <EditableTextarea
+                    <AddressFormCard
                       title="Casa"
                       value={addressForm.casa}
-                      onChange={(value) => setAddressForm((current) => ({ ...current, casa: value }))}
+                      onChange={(field, value) =>
+                        setAddressForm((current) => ({
+                          ...current,
+                          casa: {
+                            ...current.casa,
+                            [field]: value,
+                          },
+                        }))
+                      }
                     />
-                    <EditableTextarea
+                    <AddressFormCard
                       title="Entrega"
                       value={addressForm.entrega}
-                      onChange={(value) => setAddressForm((current) => ({ ...current, entrega: value }))}
+                      onChange={(field, value) =>
+                        setAddressForm((current) => ({
+                          ...current,
+                          entrega: {
+                            ...current.entrega,
+                            [field]: value,
+                          },
+                        }))
+                      }
                     />
                   </div>
                 </form>
@@ -259,16 +283,27 @@ function EditableField({ icon: Icon, label, value, onChange }) {
   )
 }
 
-function EditableTextarea({ title, value, onChange }) {
+function AddressFormCard({ title, value, onChange }) {
   return (
     <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
-      <Label className="text-lg font-semibold text-slate-900 mb-3 block">{title}</Label>
-      <Textarea
-        rows={6}
-        value={value}
-        onChange={(event) => onChange(event.target.value)}
-        className="bg-white border-slate-300 resize-none"
-      />
+      <Label className="text-lg font-semibold text-slate-900 mb-4 block">{title}</Label>
+      <div className="grid gap-4">
+        <AddressInput label="Rua" value={value.rua} onChange={(next) => onChange('rua', next)} />
+        <AddressInput label="Numero" value={value.numero} onChange={(next) => onChange('numero', next)} />
+        <AddressInput label="Bairro" value={value.bairro} onChange={(next) => onChange('bairro', next)} />
+        <AddressInput label="Cidade" value={value.cidade} onChange={(next) => onChange('cidade', next)} />
+        <AddressInput label="Estado" value={value.estado} onChange={(next) => onChange('estado', next)} />
+        <AddressInput label="CEP" value={value.cep} onChange={(next) => onChange('cep', next)} />
+      </div>
+    </div>
+  )
+}
+
+function AddressInput({ label, value, onChange }) {
+  return (
+    <div>
+      <Label className="text-sm text-slate-600 mb-2 block">{label}</Label>
+      <Input value={value} onChange={(event) => onChange(event.target.value)} className="bg-white border-slate-300" />
     </div>
   )
 }
