@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom'
-import { ShoppingBag, Menu, X } from 'lucide-react'
+import { ShoppingBag, User, Menu, X } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 
@@ -51,6 +51,14 @@ export default function Navbar({ cartCount = 0 }) {
         </div>
 
         <div className="flex items-center gap-4">
+          <Link
+            to="/login"
+            className="hidden md:inline-flex items-center gap-2 text-sm font-medium text-white/85 hover:text-white transition-colors"
+          >
+            <User className="h-4 w-4" />
+            <span>Usuario</span>
+          </Link>
+
           <Link to="/carrinho" className="relative group">
             <ShoppingBag className="h-5 w-5 text-white transition-transform group-hover:scale-110" />
             {cartCount > 0 && (
@@ -75,6 +83,11 @@ export default function Navbar({ cartCount = 0 }) {
             className="md:hidden bg-black/90 backdrop-blur-md border-b border-white/10"
           >
             <div className="px-6 py-6 space-y-4">
+              <Link to="/login" className="flex items-center gap-2 text-base font-medium text-white">
+                <User className="h-4 w-4" />
+                <span>Usuario</span>
+              </Link>
+
               {links.map((link) => (
                 <Link key={link.to} to={link.to} className="block text-base font-medium text-white">
                   {link.label}
