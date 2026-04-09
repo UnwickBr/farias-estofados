@@ -2,11 +2,13 @@ import { Link, useLocation } from 'react-router-dom'
 import { ShoppingBag, User, Menu, X } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useAuth } from '@/lib/AuthContext'
 
 export default function Navbar({ cartCount = 0 }) {
   const [mobileOpen, setMobileOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const location = useLocation()
+  const { isAuthenticated } = useAuth()
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20)
@@ -52,7 +54,7 @@ export default function Navbar({ cartCount = 0 }) {
 
         <div className="flex items-center gap-4">
           <Link
-            to="/login"
+            to={isAuthenticated ? '/usuario' : '/login'}
             className="hidden md:inline-flex items-center justify-center w-9 h-9 rounded-full border border-white/30 text-white/90 hover:text-white hover:border-white/60 hover:bg-white/10 transition-colors"
           >
             <User className="h-4 w-4" />
@@ -83,7 +85,7 @@ export default function Navbar({ cartCount = 0 }) {
           >
             <div className="px-6 py-6 space-y-4">
               <Link
-                to="/login"
+                to={isAuthenticated ? '/usuario' : '/login'}
                 className="inline-flex items-center justify-center w-10 h-10 rounded-full border border-white/30 text-white"
               >
                 <User className="h-4 w-4" />
