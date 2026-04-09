@@ -16,6 +16,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { useAuth } from '@/lib/AuthContext'
+import { getOrdersByUser } from '@/lib/orders'
 
 const menuItems = [
   { id: 'perfil', label: 'Perfil', icon: UserRound },
@@ -38,6 +39,7 @@ export default function User() {
     casa: '',
     entrega: '',
   })
+  const [orders, setOrders] = useState([])
   const [profileSaved, setProfileSaved] = useState(false)
   const [addressSaved, setAddressSaved] = useState(false)
 
@@ -57,7 +59,17 @@ export default function User() {
       casa: user.addresses?.casa || '',
       entrega: user.addresses?.entrega || '',
     })
+
+    setOrders(getOrdersByUser(user.login))
   }, [user])
+
+  useEffect(() => {
+    if (!user?.login) return
+
+    const syncOrders = () => setOrders(getOrdersByUser(user.login))
+    window.addEventListener('orders-updated', syncOrders)
+    return () => window.removeEventListener('orders-updated', syncOrders)
+  }, [user?.login])
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />
@@ -183,10 +195,23 @@ export default function User() {
               {activeSection === 'pedidos' && (
                 <div>
                   <h2 className="text-2xl font-semibold text-slate-900 mb-6">Meus Pedidos</h2>
-                  <div className="space-y-4">
-                    <OrderCard code="#FE-1048" status="Em preparo" date="09/04/2026" total="R$ 3.890,00" />
-                    <OrderCard code="#FE-1027" status="Entregue" date="27/03/2026" total="R$ 1.039,00" />
-                  </div>
+                  {orders.length === 0 ? (
+                    <div className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-8 text-center">
+                      <p className="text-slate-600">Nenhum pedido criado ainda.</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {orders.map((order) => (
+                        <OrderCard
+                          key={order.id}
+                          code={order.code}
+                          status={order.status}
+                          date={order.date}
+                          total={order.total}
+                        />
+                      ))}
+                    </div>
+                  )}
                 </div>
               )}
 

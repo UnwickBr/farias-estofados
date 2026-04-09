@@ -1,11 +1,15 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Trash2, Minus, Plus, ShoppingBag, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { getCart, updateCartQty, removeFromCart } from "../lib/cart";
+import { useAuth } from "@/lib/AuthContext";
+import { getCart, updateCartQty, removeFromCart, clearCart } from "../lib/cart";
+import { createOrderFromCart } from "../lib/orders";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function Cart() {
+  const navigate = useNavigate();
+  const { isAuthenticated, user } = useAuth();
   const [cart, setCart] = useState([]);
 
   useEffect(() => {
@@ -19,6 +23,22 @@ export default function Cart() {
     new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(price);
 
   const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+
+  const handleCheckout = () => {
+    if (!isAuthenticated) {
+      navigate("/login", { state: { from: { pathname: "/usuario" } } });
+      return;
+    }
+
+    createOrderFromCart({
+      cartItems: cart,
+      total,
+      userLogin: user?.login,
+    });
+
+    clearCart();
+    navigate("/usuario");
+  };
 
   if (cart.length === 0) {
     return (
@@ -124,7 +144,7 @@ export default function Cart() {
           <p className="text-xs text-muted-foreground mb-6">
             Frete calculado no fechamento do pedido.
           </p>
-          <Button className="w-full rounded-full h-12 text-sm font-medium">
+          <Button onClick={handleCheckout} className="w-full rounded-full h-12 text-sm font-medium">
             Finalizar Pedido
           </Button>
         </div>
