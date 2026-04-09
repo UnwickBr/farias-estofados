@@ -4,18 +4,19 @@ import { ArrowRight } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { mockProducts } from '@/lib/mock-products'
+import { placeholderImages } from '@/lib/placeholder-images'
 import HeroSection from '../components/HeroSection'
 import CategoryCard from '../components/CategoryCard'
 import ProductCard from '../components/ProductCard'
 
-const HERO_IMAGE = 'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1600&q=80'
-const ABOUT_IMAGE = 'https://images.unsplash.com/photo-1484101403633-562f891dc89a?auto=format&fit=crop&w=1400&q=80'
+const HERO_IMAGE = placeholderImages.hero
+const ABOUT_IMAGE = placeholderImages.about
 
 const categories = [
-  { name: 'Sofas', image: 'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1200&q=80' },
-  { name: 'Cadeiras', image: 'https://images.unsplash.com/photo-1519947486511-46149fa0a254?auto=format&fit=crop&w=1200&q=80' },
-  { name: 'Puffes', image: 'https://images.unsplash.com/photo-1549187774-b4e9b0445b41?auto=format&fit=crop&w=1200&q=80' },
-  { name: 'Almofadas', image: 'https://images.unsplash.com/photo-1584100936595-c0654b55a2e2?auto=format&fit=crop&w=1200&q=80' },
+  { name: 'Sofas', image: placeholderImages.sofas },
+  { name: 'Cadeiras', image: placeholderImages.cadeiras },
+  { name: 'Puffes', image: placeholderImages.puffes },
+  { name: 'Almofadas', image: placeholderImages.almofadas },
 ]
 
 export default function Home() {

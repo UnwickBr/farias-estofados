@@ -1,3 +1,5 @@
+import { placeholderImages } from './placeholder-images'
+
 export const mockProducts = [
   {
     id: 'sofa-linho-01',
@@ -5,7 +7,7 @@ export const mockProducts = [
     description: 'Sofa de linhas suaves com acabamento em linho e espuma de alta densidade.',
     price: 3890,
     category: 'Sofas',
-    image: 'https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1200&q=80',
+    image: placeholderImages.sofas,
     featured: true,
     in_stock: true,
     material: 'Linho e madeira macica',
@@ -17,7 +19,7 @@ export const mockProducts = [
     description: 'Cadeira estofada com estrutura em madeira e visual contemporaneo.',
     price: 890,
     category: 'Cadeiras',
-    image: 'https://images.unsplash.com/photo-1519947486511-46149fa0a254?auto=format&fit=crop&w=1200&q=80',
+    image: placeholderImages.cadeiras,
     featured: true,
     in_stock: true,
     material: 'Madeira e tecido premium',
@@ -29,7 +31,7 @@ export const mockProducts = [
     description: 'Puff compacto para compor salas, quartos e closets com textura sofisticada.',
     price: 590,
     category: 'Puffes',
-    image: 'https://images.unsplash.com/photo-1549187774-b4e9b0445b41?auto=format&fit=crop&w=1200&q=80',
+    image: placeholderImages.puffes,
     featured: false,
     in_stock: true,
     material: 'Boucle e base reforcada',
@@ -41,7 +43,7 @@ export const mockProducts = [
     description: 'Almofada decorativa para compor ambientes aconchegantes.',
     price: 149,
     category: 'Almofadas',
-    image: 'https://images.unsplash.com/photo-1584100936595-c0654b55a2e2?auto=format&fit=crop&w=1200&q=80',
+    image: placeholderImages.almofadas,
     featured: true,
     in_stock: true,
     material: 'Algodao e fibra siliconada',
