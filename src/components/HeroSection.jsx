@@ -19,7 +19,7 @@ export default function HeroSection({ image }) {
       </div>
 
       <div className="relative h-full max-w-7xl mx-auto px-6 lg:px-8 flex items-center">
-        <div className="max-w-lg">
+        <div className="max-w-2xl bg-black/45 backdrop-blur-[2px] px-8 py-8 md:px-12 md:py-10 rounded-sm">
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}

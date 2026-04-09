@@ -32,7 +32,8 @@ export default function Navbar({ cartCount = 0 }) {
     >
       <nav className="max-w-7xl mx-auto px-6 lg:px-8 flex items-center justify-between h-16 lg:h-20">
         <Link to="/" className="font-display text-xl lg:text-2xl font-semibold tracking-tight text-white">
-          Farias Estofados
+          <span className="text-blue-500">Farias</span>{' '}
+          <span className="text-white">Estofados</span>
         </Link>
 
         <div className="hidden md:flex items-center gap-10">
