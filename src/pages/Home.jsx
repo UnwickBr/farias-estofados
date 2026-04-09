@@ -3,7 +3,9 @@ import { Link } from 'react-router-dom'
 import { ArrowRight } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
+import { applyFallbackImage } from '@/lib/image-fallbacks'
 import { mockProducts } from '@/lib/mock-products'
+import { placeholderImages } from '@/lib/placeholder-images'
 import HeroSection from '../components/HeroSection'
 import CategoryCard from '../components/CategoryCard'
 import ProductCard from '../components/ProductCard'
@@ -99,6 +101,7 @@ export default function Home() {
               <img
                 src={ABOUT_IMAGE}
                 alt="Detalhes de mobiliario artesanal"
+                onError={(event) => applyFallbackImage(event, placeholderImages.about)}
                 className="rounded-lg w-full aspect-[4/3] object-cover"
               />
             </motion.div>

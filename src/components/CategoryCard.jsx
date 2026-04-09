@@ -1,6 +1,7 @@
-import { Link } from "react-router-dom";
-import { ArrowRight } from "lucide-react";
-import { motion } from "framer-motion";
+import { Link } from 'react-router-dom'
+import { ArrowRight } from 'lucide-react'
+import { motion } from 'framer-motion'
+import { applyFallbackImage, getCategoryFallbackImage } from '@/lib/image-fallbacks'
 
 export default function CategoryCard({ name, image, index = 0 }) {
   return (
@@ -17,6 +18,7 @@ export default function CategoryCard({ name, image, index = 0 }) {
         <img
           src={image}
           alt={name}
+          onError={(event) => applyFallbackImage(event, getCategoryFallbackImage(name))}
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
@@ -26,5 +28,5 @@ export default function CategoryCard({ name, image, index = 0 }) {
         </div>
       </Link>
     </motion.div>
-  );
+  )
 }

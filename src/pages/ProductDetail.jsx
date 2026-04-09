@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { ArrowLeft, Minus, Plus, ShoppingBag, Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { applyFallbackImage, getCategoryFallbackImage } from '@/lib/image-fallbacks'
 import { mockProducts } from '@/lib/mock-products'
 import { addToCart } from '../lib/cart'
 import { motion } from 'framer-motion'
@@ -68,7 +69,12 @@ export default function ProductDetail() {
             className="aspect-square bg-secondary rounded-lg overflow-hidden"
           >
             {product.image ? (
-              <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+              <img
+                src={product.image}
+                alt={product.name}
+                onError={(event) => applyFallbackImage(event, getCategoryFallbackImage(product.category))}
+                className="w-full h-full object-cover"
+              />
             ) : (
               <div className="w-full h-full flex items-center justify-center text-muted-foreground/30">Sem imagem</div>
             )}
