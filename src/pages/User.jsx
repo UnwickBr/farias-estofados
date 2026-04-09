@@ -1,7 +1,20 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Navigate } from 'react-router-dom'
-import { UserRound, Package, MapPinned, LogOut, Mail, CalendarDays, CreditCard, BadgeCheck } from 'lucide-react'
+import {
+  UserRound,
+  Package,
+  MapPinned,
+  LogOut,
+  Mail,
+  CalendarDays,
+  CreditCard,
+  BadgeCheck,
+  Save,
+} from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
 import { useAuth } from '@/lib/AuthContext'
 
 const menuItems = [
@@ -11,11 +24,57 @@ const menuItems = [
 ]
 
 export default function User() {
-  const { isAuthenticated, user, logout } = useAuth()
+  const { isAuthenticated, user, logout, updateUser, updateAddresses } = useAuth()
   const [activeSection, setActiveSection] = useState('perfil')
+  const [profileForm, setProfileForm] = useState({
+    fullName: '',
+    email: '',
+    age: '',
+    cpf: '',
+    birthDate: '',
+    login: '',
+  })
+  const [addressForm, setAddressForm] = useState({
+    casa: '',
+    entrega: '',
+  })
+  const [profileSaved, setProfileSaved] = useState(false)
+  const [addressSaved, setAddressSaved] = useState(false)
+
+  useEffect(() => {
+    if (!user) return
+
+    setProfileForm({
+      fullName: user.fullName || '',
+      email: user.email || '',
+      age: user.age || '',
+      cpf: user.cpf || '',
+      birthDate: user.birthDate || '',
+      login: user.login || '',
+    })
+
+    setAddressForm({
+      casa: user.addresses?.casa || '',
+      entrega: user.addresses?.entrega || '',
+    })
+  }, [user])
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />
+  }
+
+  const handleProfileSubmit = (event) => {
+    event.preventDefault()
+    updateUser(profileForm)
+    setProfileSaved(true)
+    setTimeout(() => setProfileSaved(false), 2000)
+  }
+
+  const handleAddressSubmit = (event) => {
+    event.preventDefault()
+    updateAddresses(addressForm)
+    setAddressSaved(true)
+    setTimeout(() => setAddressSaved(false), 2000)
   }
 
   return (
@@ -69,53 +128,93 @@ export default function User() {
 
             <section className="p-8">
               {activeSection === 'perfil' && (
-                <div>
-                  <h2 className="text-2xl font-semibold text-slate-900 mb-6">Dados do perfil</h2>
-                  <div className="grid md:grid-cols-2 gap-5">
-                    <InfoCard icon={UserRound} label="Nome completo" value={user?.fullName} />
-                    <InfoCard icon={Mail} label="Email" value={user?.email} />
-                    <InfoCard icon={BadgeCheck} label="Idade" value={`${user?.age} anos`} />
-                    <InfoCard icon={CreditCard} label="CPF" value={user?.cpf} />
-                    <InfoCard icon={CalendarDays} label="Data de nascimento" value={user?.birthDate} />
-                    <InfoCard icon={UserRound} label="Login" value={user?.login} />
+                <form onSubmit={handleProfileSubmit}>
+                  <div className="flex items-center justify-between gap-4 mb-6">
+                    <h2 className="text-2xl font-semibold text-slate-900">Dados do perfil</h2>
+                    <Button type="submit" className="rounded-full bg-blue-600 hover:bg-blue-500 text-white gap-2">
+                      <Save className="h-4 w-4" />
+                      Salvar perfil
+                    </Button>
                   </div>
-                </div>
+
+                  {profileSaved && <p className="text-sm text-green-600 mb-4">Perfil atualizado com sucesso.</p>}
+
+                  <div className="grid md:grid-cols-2 gap-5">
+                    <EditableField
+                      icon={UserRound}
+                      label="Nome completo"
+                      value={profileForm.fullName}
+                      onChange={(value) => setProfileForm((current) => ({ ...current, fullName: value }))}
+                    />
+                    <EditableField
+                      icon={Mail}
+                      label="Email"
+                      value={profileForm.email}
+                      onChange={(value) => setProfileForm((current) => ({ ...current, email: value }))}
+                    />
+                    <EditableField
+                      icon={BadgeCheck}
+                      label="Idade"
+                      value={profileForm.age}
+                      onChange={(value) => setProfileForm((current) => ({ ...current, age: value }))}
+                    />
+                    <EditableField
+                      icon={CreditCard}
+                      label="CPF"
+                      value={profileForm.cpf}
+                      onChange={(value) => setProfileForm((current) => ({ ...current, cpf: value }))}
+                    />
+                    <EditableField
+                      icon={CalendarDays}
+                      label="Data de nascimento"
+                      value={profileForm.birthDate}
+                      onChange={(value) => setProfileForm((current) => ({ ...current, birthDate: value }))}
+                    />
+                    <EditableField
+                      icon={UserRound}
+                      label="Login"
+                      value={profileForm.login}
+                      onChange={(value) => setProfileForm((current) => ({ ...current, login: value }))}
+                    />
+                  </div>
+                </form>
               )}
 
               {activeSection === 'pedidos' && (
                 <div>
                   <h2 className="text-2xl font-semibold text-slate-900 mb-6">Meus Pedidos</h2>
                   <div className="space-y-4">
-                    <OrderCard
-                      code="#FE-1048"
-                      status="Em preparo"
-                      date="09/04/2026"
-                      total="R$ 3.890,00"
-                    />
-                    <OrderCard
-                      code="#FE-1027"
-                      status="Entregue"
-                      date="27/03/2026"
-                      total="R$ 1.039,00"
-                    />
+                    <OrderCard code="#FE-1048" status="Em preparo" date="09/04/2026" total="R$ 3.890,00" />
+                    <OrderCard code="#FE-1027" status="Entregue" date="27/03/2026" total="R$ 1.039,00" />
                   </div>
                 </div>
               )}
 
               {activeSection === 'enderecos' && (
-                <div>
-                  <h2 className="text-2xl font-semibold text-slate-900 mb-6">Enderecos</h2>
+                <form onSubmit={handleAddressSubmit}>
+                  <div className="flex items-center justify-between gap-4 mb-6">
+                    <h2 className="text-2xl font-semibold text-slate-900">Enderecos</h2>
+                    <Button type="submit" className="rounded-full bg-blue-600 hover:bg-blue-500 text-white gap-2">
+                      <Save className="h-4 w-4" />
+                      Salvar enderecos
+                    </Button>
+                  </div>
+
+                  {addressSaved && <p className="text-sm text-green-600 mb-4">Enderecos atualizados com sucesso.</p>}
+
                   <div className="grid md:grid-cols-2 gap-5">
-                    <AddressCard
+                    <EditableTextarea
                       title="Casa"
-                      lines={['Rua das Palmeiras, 245', 'Apto 42 - Centro', 'Sao Paulo - SP', 'CEP 01010-100']}
+                      value={addressForm.casa}
+                      onChange={(value) => setAddressForm((current) => ({ ...current, casa: value }))}
                     />
-                    <AddressCard
+                    <EditableTextarea
                       title="Entrega"
-                      lines={['Av. Paulista, 1500', 'Conjunto 8', 'Sao Paulo - SP', 'CEP 01310-200']}
+                      value={addressForm.entrega}
+                      onChange={(value) => setAddressForm((current) => ({ ...current, entrega: value }))}
                     />
                   </div>
-                </div>
+                </form>
               )}
             </section>
           </div>
@@ -125,12 +224,26 @@ export default function User() {
   )
 }
 
-function InfoCard({ icon: Icon, label, value }) {
+function EditableField({ icon: Icon, label, value, onChange }) {
   return (
     <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
       <Icon className="h-5 w-5 text-blue-600 mb-4" />
-      <p className="text-sm text-slate-500 mb-1">{label}</p>
-      <p className="text-lg font-semibold text-slate-900 break-words">{value}</p>
+      <Label className="text-sm text-slate-600 mb-2 block">{label}</Label>
+      <Input value={value} onChange={(event) => onChange(event.target.value)} className="bg-white border-slate-300" />
+    </div>
+  )
+}
+
+function EditableTextarea({ title, value, onChange }) {
+  return (
+    <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+      <Label className="text-lg font-semibold text-slate-900 mb-3 block">{title}</Label>
+      <Textarea
+        rows={6}
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        className="bg-white border-slate-300 resize-none"
+      />
     </div>
   )
 }
@@ -153,19 +266,6 @@ function OrderCard({ code, status, date, total }) {
       <div>
         <p className="text-sm text-slate-500 mb-1">Total</p>
         <p className="text-base font-semibold text-slate-900">{total}</p>
-      </div>
-    </div>
-  )
-}
-
-function AddressCard({ title, lines }) {
-  return (
-    <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
-      <p className="text-lg font-semibold text-slate-900 mb-3">{title}</p>
-      <div className="space-y-1 text-slate-600">
-        {lines.map((line) => (
-          <p key={line}>{line}</p>
-        ))}
       </div>
     </div>
   )

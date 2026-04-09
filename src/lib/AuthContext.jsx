@@ -6,9 +6,13 @@ const MOCK_CREDENTIALS = {
   password: '123456',
   fullName: 'Victor Faria da Silva',
   email: 'admin@fariasestofados.com.br',
-  age: 29,
+  age: '29',
   cpf: '123.456.789-00',
   birthDate: '14/08/1996',
+  addresses: {
+    casa: 'Rua das Palmeiras, 245\nApto 42 - Centro\nSao Paulo - SP\nCEP 01010-100',
+    entrega: 'Av. Paulista, 1500\nConjunto 8\nSao Paulo - SP\nCEP 01310-200',
+  },
 }
 
 const AuthContext = createContext(null)
@@ -29,6 +33,11 @@ export const AuthProvider = ({ children }) => {
       setIsLoadingAuth(false)
     }
   }, [])
+
+  const persistUser = (nextUser) => {
+    window.localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(nextUser))
+    setUser(nextUser)
+  }
 
   const value = useMemo(
     () => ({
@@ -53,15 +62,23 @@ export const AuthProvider = ({ children }) => {
           age: MOCK_CREDENTIALS.age,
           cpf: MOCK_CREDENTIALS.cpf,
           birthDate: MOCK_CREDENTIALS.birthDate,
+          addresses: MOCK_CREDENTIALS.addresses,
         }
 
-        window.localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(nextUser))
-        setUser(nextUser)
+        persistUser(nextUser)
 
         return {
           success: true,
           user: nextUser,
         }
+      },
+      updateUser(updates) {
+        if (!user) return
+        persistUser({ ...user, ...updates })
+      },
+      updateAddresses(addresses) {
+        if (!user) return
+        persistUser({ ...user, addresses: { ...user.addresses, ...addresses } })
       },
       logout() {
         window.localStorage.removeItem(AUTH_STORAGE_KEY)
